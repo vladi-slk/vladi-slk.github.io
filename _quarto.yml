@@ -4,7 +4,6 @@ project:
   # Files nothing links to, so Quarto would not copy them otherwise.
   resources:
     - robots.txt
-    - CV_VK.pdf
     - googlebfbb54cf0c2b7c65.html
 
 website:
