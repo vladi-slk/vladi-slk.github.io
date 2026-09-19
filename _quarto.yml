@@ -24,9 +24,11 @@ format:
     theme: cerulean
     css: styles.css
     toc: true
+    include-in-header:
+      - text: |
+          <meta name="google-site-verification" content="ptvClKXwnY_tTDrTyVvQ__neQ7HujvLJxaNHgfGq-BI">
 
 metadata:
-  google-site-verification: ptvClKXwnY_tTDrTyVvQ__neQ7HujvLJxaNHgfGq-BI
   robots: index,follow
   og:
     image: imgs/mypic.png
