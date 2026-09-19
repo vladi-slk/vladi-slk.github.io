@@ -5,7 +5,7 @@ project:
 website:
   title: "Vladimir R. Kostić"
   description: "Research homepage"
-  site-url: "https://vladi-iit.github.io"
+  site-url: "https://vladi-slk.github.io"
   output-dir: "_site"
   sitemap: true
   navbar:

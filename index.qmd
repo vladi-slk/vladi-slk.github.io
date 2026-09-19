@@ -16,7 +16,7 @@ about:
       href: https://www.linkedin.com/in/vladimir-kostic-77500652/
     - icon: github
       text: GitHub
-      href: https://github.com/vladi-iit
+      href: https://github.com/vladi-slk
 ---
 
 I am an Associate professor in Applied Mathematics at the [Faculty of Science](https://www.pmf.uns.ac.rs/en/), University of Novi Sad, Serbia, and a Senior Researcher in the [Computational Statistics and Machine Learning group](https://www.iit.it/it/computational-sciences) at the Italian Institute of Technology in Genova, Italy.
