@@ -1,13 +1,19 @@
 project:
   type: website
   output-dir: docs
+  # Files nothing links to, so Quarto would not copy them otherwise.
+  resources:
+    - robots.txt
+    - CV_VK.pdf
+    - googlebfbb54cf0c2b7c65.html
 
 website:
   title: "Vladimir R. Kostić"
-  description: "Research homepage"
+  description: "Research homepage on machine learning of dynamical systems and scientific applications."
   site-url: "https://vladi-slk.github.io"
-  output-dir: "_site"
-  sitemap: true
+  image: imgs/mypic.png
+  open-graph: true
+  twitter-card: true
   navbar:
     left:
       - href: index.qmd
@@ -27,11 +33,3 @@ format:
     include-in-header:
       - text: |
           <meta name="google-site-verification" content="ptvClKXwnY_tTDrTyVvQ__neQ7HujvLJxaNHgfGq-BI">
-
-metadata:
-  robots: index,follow
-  og:
-    image: imgs/mypic.png
-    description: "Research homepage machine learning of dynmical systems and scientific applications."
-  
-

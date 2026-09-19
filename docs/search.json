@@ -4,7 +4,35 @@
     "href": "blog.html",
     "title": "Blogs",
     "section": "",
-    "text": "Recent works on Operator Framework for Learning Dyanmical Systems\n\n\n\n\n\n\n\n\n\n\n\nJan 15, 2024\n\n\nVladimir R. Kostic\n\n\n\n\n\n\nNo matching items"
+    "text": "Recent works on Operator Framework for Learning Dyanmical Systems\n\n\n\n\n\n\n\n\nJan 15, 2024\n\n\nVladimir R. Kostic\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Vladimir R. Kostić",
+    "section": "",
+    "text": "I am an Associate professor in Applied Mathematics at the Faculty of Science, University of Novi Sad, Serbia, and a Senior Researcher in the Computational Statistics and Machine Learning group at the Italian Institute of Technology in Genova, Italy.\nMy research focuses on computational mathematics, numerical linear algebra, statistics and machine learning, with a particular interest in stochastic processes and dynamical systems in general. Currently, I am working on developing novel computational methods that harness the power of ML and AI."
+  },
+  {
+    "objectID": "research.html",
+    "href": "research.html",
+    "title": "Research",
+    "section": "",
+    "text": "V. Kostić, K. Lounici, H. Halconruy, T. Devergne and M. Pontil. Learning the Infinitesimal Generator of Stochastic Diffusion Processes. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nT. Devergne, V. Kostić, M. Parrinello and M. Pontil. From Biased to Unbiased Dynamics: An Infinitesimal Generator Approach. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nV. Kostić, K. Lounici, G. Pacreau, P. Novelli, G. Turri and M. Pontil. Neural Conditional Probability for Inference. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nV. Kostić, P. Inzerili, K. Lounici, P. Novelli and M. Pontil. Consistent Long-Term Forecasting of Ergodic Dynamical Systems. 41st International Conference on Machine Learning (ICML 2024)\nV.R. Kostic, P. Novelli, R. Grazzi and K. Lounici. Learning Invariant Representations of Time-Homogeneous Stochastic Dynamical Systems. Twelfth International Conference on Learning Representations (ICLR 2024)\nV. R. Kostic, P. Novelli, A. Maurer, C. Ciliberto, L. Rosasco and M. Pontil. Learning dynamical systems via Koopman operator regression in reproducing kernel Hilbert spaces. Advances in Neural Information Processing Systems 35 (NeurIPS2022)\nV. Kostić and S. Salzo. Randomized Bregman Projections for Stochastic Feasibility Problems. Numerical Algorithms 93(3), pp. 1269-1307 (2022)\nV. Kostić, L. Cvetković, E. Šanca. From Pseudospectra of Diagonal Blocks to Pseudospectrum of a Full Matrix. Journal of Computational and Applied Mathematics, Vol 386, online 113265 (2020)\nV. Kostić and D. Gardašević. On the Geršgorin-type Localizations for Nonlinear Eigenvalue Problems. Applied Mathematics and Computation, Vol. 337, No 1, pp. 179-189 (2018)\nV. Kostić, Lj. Cvetković and D. Lj. Cvetković, Pseudospectra localizations and their applications, Numerical Linear Algebra with Applications Vol 23 (2), pp. 356–372 (2016)"
+  },
+  {
+    "objectID": "research.html#selected-publications",
+    "href": "research.html#selected-publications",
+    "title": "Research",
+    "section": "",
+    "text": "V. Kostić, K. Lounici, H. Halconruy, T. Devergne and M. Pontil. Learning the Infinitesimal Generator of Stochastic Diffusion Processes. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nT. Devergne, V. Kostić, M. Parrinello and M. Pontil. From Biased to Unbiased Dynamics: An Infinitesimal Generator Approach. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nV. Kostić, K. Lounici, G. Pacreau, P. Novelli, G. Turri and M. Pontil. Neural Conditional Probability for Inference. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nV. Kostić, P. Inzerili, K. Lounici, P. Novelli and M. Pontil. Consistent Long-Term Forecasting of Ergodic Dynamical Systems. 41st International Conference on Machine Learning (ICML 2024)\nV.R. Kostic, P. Novelli, R. Grazzi and K. Lounici. Learning Invariant Representations of Time-Homogeneous Stochastic Dynamical Systems. Twelfth International Conference on Learning Representations (ICLR 2024)\nV. R. Kostic, P. Novelli, A. Maurer, C. Ciliberto, L. Rosasco and M. Pontil. Learning dynamical systems via Koopman operator regression in reproducing kernel Hilbert spaces. Advances in Neural Information Processing Systems 35 (NeurIPS2022)\nV. Kostić and S. Salzo. Randomized Bregman Projections for Stochastic Feasibility Problems. Numerical Algorithms 93(3), pp. 1269-1307 (2022)\nV. Kostić, L. Cvetković, E. Šanca. From Pseudospectra of Diagonal Blocks to Pseudospectrum of a Full Matrix. Journal of Computational and Applied Mathematics, Vol 386, online 113265 (2020)\nV. Kostić and D. Gardašević. On the Geršgorin-type Localizations for Nonlinear Eigenvalue Problems. Applied Mathematics and Computation, Vol. 337, No 1, pp. 179-189 (2018)\nV. Kostić, Lj. Cvetković and D. Lj. Cvetković, Pseudospectra localizations and their applications, Numerical Linear Algebra with Applications Vol 23 (2), pp. 356–372 (2016)"
+  },
+  {
+    "objectID": "research.html#selected-talks",
+    "href": "research.html#selected-talks",
+    "title": "Research",
+    "section": "Selected talks",
+    "text": "Selected talks\n\nLearning Representations of Markov Processes at IEEE Conference on Decision and Control, Milano, Italy (2024)\nConsistent Long-Term Forecasting of geometrically ergodic dynamical systems at at New Trends in Statistical Learning IV, Porquerolles, France (2024)\nKoopman Operator Regression: Statistical Learning Perspective to Data-driven Dynamical Systems at New Trends in Statistical Learning III, Porquerolles, France (2023)\nSharp Spectral Rates for Koopman Operator Learning at Conference on Neural Information Processing Systems, New Orleans, USA (2023)\nM -matrices as a tool for spectral and pseudospectral analysis at Conference on Numerical Linear Algebra and Scientific Computing, Nanjing, China (2019)\nMatrix nearness problems for Lyapunov-type stability domains: computing Distance-to-Delocalization at SIAM Conference on Applied Linear Algebra, Atlanta, USA (2015)"
   },
   {
     "objectID": "posts/2024-12-30-current-research/index.html",
@@ -96,47 +124,5 @@
     "title": "About Me",
     "section": "Full CV",
     "text": "Full CV\nFor more detailed information, you can download my full CV here."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Vladimir R. Kostić",
-    "section": "",
-    "text": "I am an Associate professor in Applied Mathematics at the Faculty of Science, University of Novi Sad, Serbia, and a Senior Researcher in the Computational Statistics and Machine Learning group at the Italian Institute of Technology in Genova, Italy.\nMy research focuses on computational mathematics, numerical linear algebra, statistics and machine learning, with a particular interest in stochastic processes and dynamical systems in general. Currently, I am working on developing novel computational methods that harness the power of ML and AI."
-  },
-  {
-    "objectID": "research.html",
-    "href": "research.html",
-    "title": "Research",
-    "section": "",
-    "text": "V. Kostić, K. Lounici, H. Halconruy, T. Devergne and M. Pontil. Learning the Infinitesimal Generator of Stochastic Diffusion Processes. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nT. Devergne, V. Kostić, M. Parrinello and M. Pontil. From Biased to Unbiased Dynamics: An Infinitesimal Generator Approach. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nV. Kostić, K. Lounici, G. Pacreau, P. Novelli, G. Turri and M. Pontil. Neural Conditional Probability for Inference. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nV. Kostić, P. Inzerili, K. Lounici, P. Novelli and M. Pontil. Consistent Long-Term Forecasting of Ergodic Dynamical Systems. 41st International Conference on Machine Learning (ICML 2024)\nV.R. Kostic, P. Novelli, R. Grazzi and K. Lounici. Learning Invariant Representations of Time-Homogeneous Stochastic Dynamical Systems. Twelfth International Conference on Learning Representations (ICLR 2024)\nV. R. Kostic, P. Novelli, A. Maurer, C. Ciliberto, L. Rosasco and M. Pontil. Learning dynamical systems via Koopman operator regression in reproducing kernel Hilbert spaces. Advances in Neural Information Processing Systems 35 (NeurIPS2022)\nV. Kostić and S. Salzo. Randomized Bregman Projections for Stochastic Feasibility Problems. Numerical Algorithms 93(3), pp. 1269-1307 (2022)\nV. Kostić, L. Cvetković, E. Šanca. From Pseudospectra of Diagonal Blocks to Pseudospectrum of a Full Matrix. Journal of Computational and Applied Mathematics, Vol 386, online 113265 (2020)\nV. Kostić and D. Gardašević. On the Geršgorin-type Localizations for Nonlinear Eigenvalue Problems. Applied Mathematics and Computation, Vol. 337, No 1, pp. 179-189 (2018)\nV. Kostić, Lj. Cvetković and D. Lj. Cvetković, Pseudospectra localizations and their applications, Numerical Linear Algebra with Applications Vol 23 (2), pp. 356–372 (2016)"
-  },
-  {
-    "objectID": "research.html#selected-journal-articles",
-    "href": "research.html#selected-journal-articles",
-    "title": "Research",
-    "section": "",
-    "text": "Morphological Symmetries in Robotics\nD. Ordoñez-Apraez, G. Turrisi, V.R. Kostic, et al.\nThe International Journal of Robotics Research (2025, Forthcoming)\nSlow Dynamical Modes from Static Averages\nT. Devergne, V.R. Kostic, M. Pontil, M. Parrinello\nSubmitted to The Journal of Chemical Physics (2024)\nRandomized Bregman Projections for Stochastic Feasibility Problems\nV. Kostić, S. Salzo\nNumerical Algorithms, 93(3), pp. 1269-1307 (2022)"
-  },
-  {
-    "objectID": "research.html#seleceted-conference-proceedings",
-    "href": "research.html#seleceted-conference-proceedings",
-    "title": "Research",
-    "section": "Seleceted Conference Proceedings",
-    "text": "Seleceted Conference Proceedings\n\nLearning the Infinitesimal Generator of Stochastic Diffusion Processes\nV.R. Kostić, K. Lounici, H. Halconruy, T. Devergne, M. Pontil\nAdvances in Neural Information Processing Systems 37 (NeurIPS 2024)\nNeural Conditional Probability for Inference\nV.R. Kostić, K. Lounici, G. Pacreau, P. Novelli, G. Turri, M. Pontil\nAdvances in Neural Information Processing Systems 37 (NeurIPS 2024)\nConsistent Long-Term Forecasting of Ergodic Dynamical Systems\nV. Kostić, P. Inzerili, K. Lounici, P. Novelli, M. Pontil\n41st International Conference on Machine Learning (ICML 2024)"
-  },
-  {
-    "objectID": "research.html#selected-publications",
-    "href": "research.html#selected-publications",
-    "title": "Research",
-    "section": "",
-    "text": "V. Kostić, K. Lounici, H. Halconruy, T. Devergne and M. Pontil. Learning the Infinitesimal Generator of Stochastic Diffusion Processes. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nT. Devergne, V. Kostić, M. Parrinello and M. Pontil. From Biased to Unbiased Dynamics: An Infinitesimal Generator Approach. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nV. Kostić, K. Lounici, G. Pacreau, P. Novelli, G. Turri and M. Pontil. Neural Conditional Probability for Inference. Advances in Neural Information Processing Systems 37 (NeurIPS2024)\nV. Kostić, P. Inzerili, K. Lounici, P. Novelli and M. Pontil. Consistent Long-Term Forecasting of Ergodic Dynamical Systems. 41st International Conference on Machine Learning (ICML 2024)\nV.R. Kostic, P. Novelli, R. Grazzi and K. Lounici. Learning Invariant Representations of Time-Homogeneous Stochastic Dynamical Systems. Twelfth International Conference on Learning Representations (ICLR 2024)\nV. R. Kostic, P. Novelli, A. Maurer, C. Ciliberto, L. Rosasco and M. Pontil. Learning dynamical systems via Koopman operator regression in reproducing kernel Hilbert spaces. Advances in Neural Information Processing Systems 35 (NeurIPS2022)\nV. Kostić and S. Salzo. Randomized Bregman Projections for Stochastic Feasibility Problems. Numerical Algorithms 93(3), pp. 1269-1307 (2022)\nV. Kostić, L. Cvetković, E. Šanca. From Pseudospectra of Diagonal Blocks to Pseudospectrum of a Full Matrix. Journal of Computational and Applied Mathematics, Vol 386, online 113265 (2020)\nV. Kostić and D. Gardašević. On the Geršgorin-type Localizations for Nonlinear Eigenvalue Problems. Applied Mathematics and Computation, Vol. 337, No 1, pp. 179-189 (2018)\nV. Kostić, Lj. Cvetković and D. Lj. Cvetković, Pseudospectra localizations and their applications, Numerical Linear Algebra with Applications Vol 23 (2), pp. 356–372 (2016)"
-  },
-  {
-    "objectID": "research.html#selected-talks",
-    "href": "research.html#selected-talks",
-    "title": "Research",
-    "section": "Selected talks",
-    "text": "Selected talks\n\nLearning Representations of Markov Processes at IEEE Conference on Decision and Control, Milano, Italy (2024)\nConsistent Long-Term Forecasting of geometrically ergodic dynamical systems at at New Trends in Statistical Learning IV, Porquerolles, France (2024)\nKoopman Operator Regression: Statistical Learning Perspective to Data-driven Dynamical Systems at New Trends in Statistical Learning III, Porquerolles, France (2023)\nSharp Spectral Rates for Koopman Operator Learning at Conference on Neural Information Processing Systems, New Orleans, USA (2023)\nM -matrices as a tool for spectral and pseudospectral analysis at Conference on Numerical Linear Algebra and Scientific Computing, Nanjing, China (2019)\nMatrix nearness problems for Lyapunov-type stability domains: computing Distance-to-Delocalization at SIAM Conference on Applied Linear Algebra, Atlanta, USA (2015)"
   }
 ]
