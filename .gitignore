@@ -2,3 +2,7 @@
 .DS_Store
 
 **/*.quarto_ipynb
+posts/*/_src/*.npy
+posts/*/_src/*.npz
+posts/*/_src/tklearn/
+__pycache__/
