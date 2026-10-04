@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/2026-10-01-langevin-informed-transfer-learning/index.html",
       "/posts/2026-09-30-sgot-metric-dynamical-systems/index.html",
       "/posts/2026-09-30-toeplitz-spectral-methods/index.html",
       "/posts/2024-12-30-current-research/index.html"

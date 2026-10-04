@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Vladimir R. Kostić">
+<meta name="dcterms.date" content="2026-10-01">
+<meta name="description" content="LITL learns the slow spectral structure and the projected drift of a target Langevin system from samples of a different, biased system plus black-box energy feedback. It comes with finite-sample guarantees in Sobolev norms and works for molecules, generative models, nanomagnets and latent steering of neural networks.">
+
+<title>Learning dynamics you never observed – Vladimir R. Kostić</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6ce9cb876124979814f7c3ebe208a1be.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<meta name="google-site-verification" content="ptvClKXwnY_tTDrTyVvQ__neQ7HujvLJxaNHgfGq-BI">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Learning dynamics you never observed – Vladimir R. Kostić">
+<meta property="og:description" content="LITL learns the slow spectral structure and the projected drift of a target Langevin system from samples of a different, biased system plus black-box energy feedback. It comes with finite-sample guarantees in Sobolev norms and works for molecules, generative models, nanomagnets and latent steering of neural networks.">
+<meta property="og:image" content="https://vladi-slk.github.io/posts/2026-10-01-langevin-informed-transfer-learning/figs/litl-hero.png">
+<meta property="og:site_name" content="Vladimir R. Kostić">
+<meta property="og:image:height" content="1593">
+<meta property="og:image:width" content="2275">
+<meta property="og:image:alt" content="A double-well potential, biased samples, and the slowest eigenfunction recovered by LITL from those samples.">
+<meta name="twitter:title" content="Learning dynamics you never observed – Vladimir R. Kostić">
+<meta name="twitter:description" content="LITL learns the slow spectral structure and the projected drift of a target Langevin system from samples of a different, biased system plus black-box energy feedback. It comes with finite-sample guarantees in Sobolev norms and works for molecules, generative models, nanomagnets and latent steering of neural networks.">
+<meta name="twitter:image" content="https://vladi-slk.github.io/posts/2026-10-01-langevin-informed-transfer-learning/figs/litl-hero.png">
+<meta name="twitter:image-height" content="1593">
+<meta name="twitter:image-width" content="2275">
+<meta name="twitter:image:alt" content="A double-well potential, biased samples, and the slowest eigenfunction recovered by LITL from those samples.">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Vladimir R. Kostić</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#four-situations-one-question" id="toc-four-situations-one-question" class="nav-link active" data-scroll-target="#four-situations-one-question">Four situations, one question</a></li>
+  <li><a href="#langevin-dynamics-and-its-generator" id="toc-langevin-dynamics-and-its-generator" class="nav-link" data-scroll-target="#langevin-dynamics-and-its-generator">Langevin dynamics and its generator</a></li>
+  <li><a href="#why-transfer-at-the-level-of-the-generator" id="toc-why-transfer-at-the-level-of-the-generator" class="nav-link" data-scroll-target="#why-transfer-at-the-level-of-the-generator">Why transfer at the level of the generator</a></li>
+  <li><a href="#litl-in-two-steps" id="toc-litl-in-two-steps" class="nav-link" data-scroll-target="#litl-in-two-steps">LITL in two steps</a></li>
+  <li><a href="#spherical-litl-steering-normalised-representations" id="toc-spherical-litl-steering-normalised-representations" class="nav-link" data-scroll-target="#spherical-litl-steering-normalised-representations">Spherical LITL: steering normalised representations</a></li>
+  <li><a href="#what-can-be-guaranteed" id="toc-what-can-be-guaranteed" class="nav-link" data-scroll-target="#what-can-be-guaranteed">What can be guaranteed</a></li>
+  <li><a href="#experiments" id="toc-experiments" class="nav-link" data-scroll-target="#experiments">Experiments</a></li>
+  <li><a href="#why-i-think-this-matters" id="toc-why-i-think-this-matters" class="nav-link" data-scroll-target="#why-i-think-this-matters">Why I think this matters</a></li>
+  <li><a href="#paper-and-citation" id="toc-paper-and-citation" class="nav-link" data-scroll-target="#paper-and-citation">Paper and citation</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Learning dynamics you never observed</h1>
+<p class="subtitle lead">Langevin-Informed Transfer Learning recovers slow dynamics from biased samples and black-box feedback, with no target trajectories. Notes on our NeurIPS 2026 paper.</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">research</div>
+    <div class="quarto-category">NeurIPS 2026</div>
+    <div class="quarto-category">transfer learning</div>
+    <div class="quarto-category">Langevin dynamics</div>
+    <div class="quarto-category">statistical learning</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    LITL learns the slow spectral structure and the projected drift of a target Langevin system from samples of a different, biased system plus black-box energy feedback. It comes with finite-sample guarantees in Sobolev norms and works for molecules, generative models, nanomagnets and latent steering of neural networks.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Vladimir R. Kostić </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 1, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="post-lede">
+<p>Some dynamics you can simulate. Others you can only glimpse. A protein-structure foundation model gives you thousands of plausible conformations, but no clock. An enhanced-sampling simulation crosses barriers quickly, but only because you pushed it with a bias. A magnetometer measures the energy of a nanomagnet, but not its trajectories. A deployed classifier can be audited, but not retrained. In every case the question is the same: <strong>how can one recover a target system’s dynamics without access to its trajectories?</strong> Our NeurIPS 2026 paper (<a href="https://arxiv.org/abs/2610.01522">arXiv:2610.01522</a>) answers it for Langevin dynamics with a method called <strong>LITL</strong>, Langevin-Informed Transfer Learning. This is joint work with Karim Lounici, Hélène Halconruy, Timothée Devergne, Michele Parrinello and Massimiliano Pontil.</p>
+</div>
+<div class="callout callout-style-simple callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>TL;DR
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Transfer the generator, not the weights.</strong> LITL learns the slow spectral structure of the <em>target</em> Langevin generator (its timescales and slow modes) together with the drift projected onto those modes. It only uses samples from a <em>different</em> system plus black-box evaluations of the energy difference.</li>
+<li><strong>No trajectories needed.</strong> The generator’s quadratic form is an expectation of gradients, so static, biased samples, importance weights and automatic differentiation of the features are enough. There is no lag time and no time stepping.</li>
+<li><strong>Guarantees.</strong> Finite-sample bounds for eigenvalues, eigenfunctions and the projected drift, with neural-network features, in <strong>Sobolev norms</strong>. That means the derivatives are controlled too, which is what you need to <em>simulate</em> the learned dynamics.</li>
+<li><strong>Spherical LITL.</strong> On a sphere, pure diffusion has a uniform equilibrium, so source samples are free: just normalise Gaussian vectors. This makes LITL a gradient-free way to steer normalised latent representations of trained networks.</li>
+<li><strong>Results.</strong> Accurate higher eigenvalues on a double well where earlier methods fail. Physical timescales from biased alanine-dipeptide simulations. Kinetics for static BioEmu samples of chignolin. More than ten eigenfunctions of a cobalt nanoparticle from energy evaluations alone. About 94% of a classifier’s fairness gap removed post hoc without retraining. Below there is a <strong>live magnetization lab</strong> where LITL runs in your browser.</li>
+</ul>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="figs/litl-hero.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Learning the right system from the wrong data, on a 1D double well. (a) The target system rarely crosses its barrier, so we sample a biased system whose bias potential V fills the barrier. (b) From those biased samples, LITL recovers the target’s slowest eigenfunction, which tells you which well you are in. The same estimator without importance weights learns the biased system instead. (c) The drift learned from energy differences approaches the true force as more modes are kept. (d) The switching time: LITL gets the target’s 8.1 vs the exact 8.4, while the naive estimate is 14 times too fast. Minimal re-implementation written for this post (fixed Gaussian features, LITL step 2), not the paper’s neural-network code."><img src="figs/litl-hero.png" class="img-fluid figure-img" alt="Learning the right system from the wrong data, on a 1D double well. (a) The target system rarely crosses its barrier, so we sample a biased system whose bias potential V fills the barrier. (b) From those biased samples, LITL recovers the target’s slowest eigenfunction, which tells you which well you are in. The same estimator without importance weights learns the biased system instead. (c) The drift learned from energy differences approaches the true force as more modes are kept. (d) The switching time: LITL gets the target’s 8.1 vs the exact 8.4, while the naive estimate is 14 times too fast. Minimal re-implementation written for this post (fixed Gaussian features, LITL step 2), not the paper’s neural-network code."></a></p>
+<figcaption><strong>Learning the right system from the wrong data</strong>, on a 1D double well. (a) The target system rarely crosses its barrier, so we sample a <em>biased</em> system whose bias potential V fills the barrier. (b) From those biased samples, LITL recovers the target’s slowest eigenfunction, which tells you which well you are in. The same estimator without importance weights learns the biased system instead. (c) The drift learned from energy differences approaches the true force as more modes are kept. (d) The switching time: LITL gets the target’s 8.1 vs the exact 8.4, while the naive estimate is 14 times too fast. Minimal re-implementation written for this post (fixed Gaussian features, LITL step 2), not the paper’s neural-network code.</figcaption>
+</figure>
+</div>
+<section id="four-situations-one-question" class="level2">
+<h2 class="anchored" data-anchor-id="four-situations-one-question">Four situations, one question</h2>
+<table class="kv-table table-striped caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 33%">
+<col style="width: 37%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>setting</th>
+<th>what you have</th>
+<th>what you want</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>enhanced molecular simulation (metadynamics, umbrella sampling)</td>
+<td>trajectories of the system <em>pushed</em> by a bias potential</td>
+<td>physical transition rates and metastable states</td>
+</tr>
+<tr class="even">
+<td>generative models of molecules (e.g.&nbsp;BioEmu)</td>
+<td>static equilibrium samples, with no time</td>
+<td>kinetics: which states, how fast between them</td>
+</tr>
+<tr class="odd">
+<td>magnetic nanoparticles</td>
+<td>energy measurements (micro-SQUID, torque magnetometry)</td>
+<td>switching times, metastable orientations</td>
+</tr>
+<tr class="even">
+<td>a trained neural network</td>
+<td>its latent representations and an audit oracle</td>
+<td>a flow that steers it towards a goal, without retraining</td>
+</tr>
+</tbody>
+</table>
+<p>Transfer learning normally moves <em>parameters</em> from one task to another, by fine-tuning, feature reuse or reweighted losses, and almost always needs target labels, target gradients or retraining. LITL moves something else: the <strong>structure of the stochastic dynamics</strong>.</p>
+</section>
+<section id="langevin-dynamics-and-its-generator" class="level2">
+<h2 class="anchored" data-anchor-id="langevin-dynamics-and-its-generator">Langevin dynamics and its generator</h2>
+<p>The workhorse model is overdamped Langevin dynamics at inverse temperature <span class="math inline">\(\beta\)</span> in a potential <span class="math inline">\(U\)</span>:</p>
+<p><span class="math display">\[
+dX_t=-\nabla U(X_t)\,dt+\sqrt{2\beta^{-1}}\,dW_t,\qquad \pi(dx)\propto e^{-\beta U(x)}dx .
+\]</span></p>
+<p>It is the model of thermal molecular motion, of stochastic gradient descent near a minimum, and of the noise process inside diffusion models. Everything about its long-time behaviour is encoded in the <strong>infinitesimal generator</strong></p>
+<p><span class="math display">\[
+Lf=-\langle\nabla U,\nabla f\rangle+\beta^{-1}\Delta f,\qquad L=\sum_{i\ge0}\lambda_i\,\psi_i\otimes\psi_i ,
+\]</span></p>
+<p>which is self-adjoint in <span class="math inline">\(L^2_\pi\)</span>. Its eigenvalues <span class="math inline">\(0=\lambda_0&gt;\lambda_1\ge\lambda_2\ge\dots\)</span> are relaxation rates, so <span class="math inline">\(1/|\lambda_i|\)</span> is the <span class="math inline">\(i\)</span>-th characteristic timescale. Its eigenfunctions are the <strong>slow collective variables</strong>: <span class="math inline">\(\psi_1\)</span> tells you which metastable basin you are in, and <span class="math inline">\(|\lambda_1|\)</span> tells you how often you leave it. Because <span class="math inline">\(L\)</span> is unbounded, we work with its <strong>resolvent</strong> <span class="math inline">\(R_\mu=(I-\mu^{-1}L)^{-1}\)</span>. The resolvent is compact, has the same eigenfunctions, and has eigenvalues <span class="math inline">\(\nu_i=\mu/(\mu-\lambda_i)\)</span>, so the slowest modes become the <em>largest</em> ones, which is what low-rank learning finds most easily.</p>
+</section>
+<section id="why-transfer-at-the-level-of-the-generator" class="level2">
+<h2 class="anchored" data-anchor-id="why-transfer-at-the-level-of-the-generator">Why transfer at the level of the generator</h2>
+<p>Add a bias <span class="math inline">\(V\)</span> to accelerate exploration, so the source dynamics run in <span class="math inline">\(U'=U+V\)</span>. At the level of generators the change is simple and <em>linear</em>:</p>
+<p><span class="math display">\[
+L' \;=\; L-\langle\nabla V,\nabla(\cdot)\rangle .
+\]</span></p>
+<p>At the level of transfer operators <span class="math inline">\(T_t=e^{tL}\)</span>, which most data-driven methods learn, it is not, because <span class="math inline">\(e^{tL'}\neq e^{tL}\,e^{-t\langle\nabla V,\nabla\cdot\rangle}\)</span>: the two operators do not commute. So you cannot debias a learned transfer operator, but you can debias a generator. The bias also appears as a known change of measure,</p>
+<p><span class="math display">\[
+\frac{d\pi}{d\pi'}(x)=\frac{e^{\beta V(x)}}{\int e^{\beta V}\,d\pi'},
+\]</span></p>
+<p>so every expectation under the target can be estimated from source samples with importance weights <span class="math inline">\(v(x)=e^{\beta V(x)}\)</span>.</p>
+<div class="kv-keyidea">
+<div class="kv-kicker">
+<p>The key identity</p>
+</div>
+<p>For Langevin dynamics, the generator’s quadratic form is an expectation of gradients, <span class="math display">\[
+\langle f,(-L)g\rangle_{L^2_\pi}\;=\;\beta^{-1}\,\mathbb E_{x\sim\pi}\big[\nabla f(x)^\top\nabla g(x)\big]\;=\;\frac{1}{\beta\,\bar v}\,\mathbb E_{x'\sim\pi'}\big[v(x')\,\nabla f(x')^\top\nabla g(x')\big].
+\]</span> There are no time derivatives and no lag times on the right-hand side. If you can sample <em>anything</em> with a known density ratio to the target and differentiate your features, you can learn the target’s generator. <strong>Trajectories are replaced by Dirichlet forms.</strong></p>
+</div>
+<p>This is also why LITL works in the <strong>energy (Sobolev) norm</strong> <span class="math inline">\(\|f\|^2_{\mathcal W^\mu_\pi}=\|f\|^2_{L^2_\pi}+\|\nabla f\|^2_{L^2_\pi}/(\mu\beta)\)</span> rather than plain <span class="math inline">\(L^2\)</span>. That norm is natural for the generator, it is estimable from samples, and it controls derivatives, which we will need for the drift.</p>
+</section>
+<section id="litl-in-two-steps" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="litl-in-two-steps">LITL in two steps</h2>
+<div class="kv-flow">
+  <div class="kv-flow-row">
+    <div class="kv-flow-box"><b>Data</b><br>source samples x′ ~ π′ (biased, static, or uniform on a sphere) + black-box values V(x′), giving weights v = e<sup>βV</sup></div>
+    <div class="kv-flow-arrow">→</div>
+    <div class="kv-flow-box"><b>Step 1</b><br>learn features z<sub>θ</sub> with a Dirichlet-form loss</div>
+    <div class="kv-flow-arrow">→</div>
+    <div class="kv-flow-box"><b>Step 2</b><br>generalized eigenproblem Ĉu = ν̂ Ŵu</div>
+  </div>
+  <div class="kv-flow-down">↓</div>
+  <div class="kv-flow-box kv-flow-out"><b>Target dynamics:</b> timescales, slow modes and projected drift, used to forecast, simulate and steer</div>
+</div>
+<p><strong>Step 1: representation learning.</strong> We look for neural features <span class="math inline">\(z_\theta=(z_0^\theta,\dots,z_m^\theta)\)</span> whose span is the leading invariant subspace of the resolvent, <span class="math inline">\(R_\mu\approx Z_\theta D_\theta Z_\theta^*\)</span>. Using the identity above, the Hilbert–Schmidt approximation error in <span class="math inline">\(\mathcal W^\mu_\pi\)</span> becomes a loss over two covariance matrices estimated on <em>source</em> samples,</p>
+<p><span class="math display">\[
+\mathcal L_\alpha(\theta)=\operatorname{tr}\!\big[(D_\theta W_\theta)^2-2\bar v\,D_\theta C_\theta+\alpha\,(W_\theta-\bar vI)^2\big],
+\]</span></p>
+<p><span class="math display">\[
+C_\theta=\mathbb E_{\pi'}\!\big[v\,z_\theta z_\theta^\top\big],\qquad
+W_\theta=C_\theta+\tfrac{1}{\mu\beta}\,\mathbb E_{\pi'}\!\big[v\,J_\theta J_\theta^\top\big],
+\]</span></p>
+<p>where <span class="math inline">\(J_\theta\)</span> is the Jacobian of the features. <strong>Theorem 3.1</strong> shows this is the right objective. Its expectation is bounded below by <span class="math inline">\(-\sum_{i\le m}\mu^2\bar v^2/(\mu-\lambda_i)^2\)</span>, with equality <em>if and only if</em> the features span the leading eigenfunctions. When <span class="math inline">\(\alpha&gt;0\)</span>, the optimum also returns the eigenvalues, <span class="math inline">\(e^{-(d_i^\theta)^2}=\nu_i\)</span>. Splitting each batch into two independent halves gives an unbiased estimator at cost <span class="math inline">\(\mathcal O(b\,m^2 d)\)</span>.</p>
+<p><strong>Step 2: spectral estimation and dynamics recovery.</strong> With the features fixed, the target’s slow eigenpairs follow from a small generalized eigenvalue problem,</p>
+<p><span class="math display">\[
+\widehat C_\theta\,\hat u_i=\hat\nu_i\,\widehat W_\theta\,\hat u_i,\qquad \hat\lambda_i=\mu\,(1-1/\hat\nu_i),\qquad \hat\psi_i=z_\theta(\cdot)^\top\hat u_i .
+\]</span></p>
+<p>The drift comes from a neat observation. For the coordinate functions <span class="math inline">\(f_k(x)=x_k\)</span> we have <span class="math inline">\(\partial_kU=-Lf_k\)</span>, so replacing <span class="math inline">\(L\)</span> by <span class="math inline">\(\widehat L=\sum_i\hat\lambda_i\hat\psi_i\otimes\hat\psi_i\)</span> gives the <strong>gradient of the target potential projected onto the slow manifold</strong>, <span class="math inline">\(\widehat{\nabla U}=\widehat G z_\theta\)</span>, in closed form. From there you can forecast,</p>
+<p><span class="math display">\[
+\widehat{\mathbb P}[X_t\in B\mid X_0=x]=\sum_{i=0}^m e^{\hat\lambda_i t}\,\hat u_i^\top z_\theta(x)\sum_{x'_j\in B}\frac{v(x'_j)}{\bar v}\,\hat u_i^\top z_\theta(x'_j),
+\]</span></p>
+<p>and you can simulate <em>new</em> trajectories of the target, <span class="math inline">\(d\widehat X_t=-\widehat G z_\theta(\widehat X_t)\,dt+\sqrt{2\beta^{-1}}\,dW_t\)</span>, which the data never contained.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>Coarse-graining, made statistical.</strong> Keeping only the leading <span class="math inline">\(m\)</span> eigenfunctions is the spectral version of what statistical mechanics calls coarse-graining: fast modes are integrated out and you keep effective dynamics on slow collective coordinates.</p>
+</div></div></section>
+<section id="spherical-litl-steering-normalised-representations" class="level2">
+<h2 class="anchored" data-anchor-id="spherical-litl-steering-normalised-representations">Spherical LITL: steering normalised representations</h2>
+<p>On a sphere <span class="math inline">\(\mathbb S^{d-1}\)</span>, Langevin dynamics needs no confining potential. Pure diffusion (<span class="math inline">\(U'=0\)</span>) has the <em>uniform</em> distribution as its equilibrium, so <strong>source samples cost nothing</strong>: draw Gaussian vectors and normalise them. There is no integrator to tune and no long trajectory to wait for. The target potential enters only through black-box evaluations <span class="math inline">\(U(x)\)</span>, and the learned spherical gradient <span class="math inline">\(\nabla_{\mathbb S^{d-1}}U(e)=(I-ee^\top)\widehat Gz_\theta(e)\)</span> drives short, geometry-respecting updates,</p>
+<p><span class="math display">\[
+e\;\leftarrow\;\frac{e-\gamma\,(I-ee^\top)\,\widehat G z_\theta(e)}{\big\|e-\gamma\,(I-ee^\top)\,\widehat G z_\theta(e)\big\|}.
+\]</span></p>
+<p>This fits modern AI well: contrastive embeddings, angular-margin classifiers and retrieval systems all store meaning in <em>directions</em>, and token dynamics in transformers can themselves be read as interacting particles on a sphere.</p>
+</section>
+<section id="what-can-be-guaranteed" class="level2">
+<h2 class="anchored" data-anchor-id="what-can-be-guaranteed">What can be guaranteed</h2>
+<p>The statistical analysis needs three assumptions: the features and their derivatives are bounded, the potential is confining and the bias is bounded, and the gradient <span class="math inline">\(\nabla U\)</span> has some Sobolev regularity <span class="math inline">\(p\ge1\)</span>. Writing <span class="math inline">\(\mathcal E_m(\theta)\)</span> for the representation error of step 1 and</p>
+<p><span class="math display">\[
+\varepsilon_n(\delta)=\tau\,e^{2\beta\|V\|_\infty}\sqrt{\frac{m\,d}{\mu\beta n}\ln\frac{m}{\delta}}
+\]</span></p>
+<p>for the statistical error from <span class="math inline">\(n\)</span> biased samples, <strong>Theorem 4.1</strong> gives, with probability <span class="math inline">\(1-\delta\)</span>,</p>
+<p><span class="math display">\[
+\frac{|\lambda_i-\hat\lambda_i|}{|\lambda_i|}\lesssim\Big(\sqrt{\tfrac{\mu}{|\lambda_i|}}+\sqrt{\tfrac{|\lambda_i|}{\mu}}\Big)^2\big(\mathcal E_m(\theta)+\varepsilon_n(\delta)\big),
+\qquad
+\|\hat\psi_i-\psi_i\|_{\mathcal W^\mu_\pi}\lesssim\frac{\mathcal E_m(\theta)}{\mathrm{gap}_i}+\frac{\varepsilon_n(\delta)}{[\mathrm{gap}_i-3\mathcal E_m(\theta)]_+},
+\]</span></p>
+<p>and, for every <span class="math inline">\(s\in[0,1]\)</span>,</p>
+<p><span class="math display">\[
+\|\nabla U-\widehat{\nabla U}\|_{\mathcal W^{\mu,s}_\pi}\lesssim\underbrace{\nu_{m+1}^{\frac{p-s}{2}}\,\|\nabla U\|_{\mathcal W^{\mu,p}_\pi}}_{\text{spectral truncation}}\;+\;\underbrace{\mu\,\sigma_\pi\,\nu_m^{-\frac{3+s}{2}}\big(\mathcal E_m(\theta)+\varepsilon_n(\delta)\big)}_{\text{learning}} .
+\]</span></p>
+<p>Three things are worth reading off these bounds.</p>
+<ul>
+<li><strong>The shift <span class="math inline">\(\mu\)</span> is a focusing knob.</strong> The eigenvalue error is amplified by a factor that is smallest, equal to 4, when <span class="math inline">\(\mu\approx|\lambda_i|\)</span>. You can tune the estimator to the timescale you care about.</li>
+<li><strong>The gradient error is measured in a Sobolev norm</strong>, not only in <span class="math inline">\(L^2\)</span>. When the true gradient lives in <span class="math inline">\(\mathcal W^{\mu,p}_\pi\)</span>, the estimate is accurate in every weaker <span class="math inline">\(\mathcal W^{\mu,s}_\pi\)</span>, <span class="math inline">\(s&lt;p\)</span>, derivatives included. This is what lets the learned drift generate dynamics rather than just fit values. To our knowledge these are the first finite-sample guarantees of this kind for eigenvalues, eigenfunctions <em>and</em> projected drift with neural networks.</li>
+<li><strong>There is an honest price for the bias</strong>: the factor <span class="math inline">\(e^{2\beta\|V\|_\infty}\)</span>. Importance weighting works best when the source is not too far from the target, and the bound says by how much.</li>
+</ul>
+<p><a href="figs/litl-focusing.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="figs/litl-focusing.png" class="img-fluid"></a></p>
+</section>
+<section id="experiments" class="level2">
+<h2 class="anchored" data-anchor-id="experiments">Experiments</h2>
+<section id="double-well-higher-eigenvalues-from-biased-data" class="level3">
+<h3 class="anchored" data-anchor-id="double-well-higher-eigenvalues-from-biased-data">Double well: higher eigenvalues from biased data</h3>
+<p>On a 1D double well with a reference spectrum, the two existing methods for this task miss even the slowest eigenvalue by a factor of three or more, and the higher ones by large factors. LITL recovers all four leading eigenvalues within a few percent, and its eigenfunctions stay stable across random seeds.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="figs/litl-doublewell-table.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Eigenvalue error on the double-well benchmark (Table 1 of the paper, log scale). Devergne et al.&nbsp;(NeurIPS 2024) learn the generator from biased data with neural features. Zhang, Li and Schütte (J. Comput. Phys. 2022) solve the eigenvalue PDE with neural networks and collapse onto the slowest modes."><img src="figs/litl-doublewell-table.png" class="img-fluid figure-img" alt="Eigenvalue error on the double-well benchmark (Table 1 of the paper, log scale). Devergne et al.&nbsp;(NeurIPS 2024) learn the generator from biased data with neural features. Zhang, Li and Schütte (J. Comput. Phys. 2022) solve the eigenvalue PDE with neural networks and collapse onto the slowest modes."></a></p>
+<figcaption><strong>Eigenvalue error on the double-well benchmark</strong> (Table 1 of the paper, log scale). Devergne et al.&nbsp;(NeurIPS 2024) learn the generator from biased data with neural features. Zhang, Li and Schütte (J. Comput. Phys. 2022) solve the eigenvalue PDE with neural networks and collapse onto the slowest modes.</figcaption>
+</figure>
+</div>
+</section>
+<section id="alanine-dipeptide-the-timescale-you-would-have-gotten-wrong" class="level3">
+<h3 class="anchored" data-anchor-id="alanine-dipeptide-the-timescale-you-would-have-gotten-wrong">Alanine dipeptide: the timescale you would have gotten wrong</h3>
+<p>The slow conformational change of alanine dipeptide, along the dihedral angle <span class="math inline">\(\phi\)</span>, is essentially never observed without a bias potential. Learning on biased simulations <em>without</em> reweighting gives a slowest eigenvalue of <span class="math inline">\(-0.56\)</span>, a timescale of about <strong>2</strong>, which is physically impossible. With LITL’s reweighting it becomes <span class="math inline">\(-0.029\)</span>, a timescale of about <strong>350</strong>. Same data, same network: the only difference is that the transfer to the target generator is done correctly.</p>
+</section>
+<section id="chignolin-giving-kinetics-to-a-generative-model" class="level3">
+<h3 class="anchored" data-anchor-id="chignolin-giving-kinetics-to-a-generative-model">Chignolin: giving kinetics to a generative model</h3>
+<p>BioEmu and similar foundation models now produce protein equilibrium ensembles at an unprecedented scale. But samples carry no time, and standard spectral tools like TICA need trajectories. LITL needs neither. We trained it with graph neural networks on (i) long molecular dynamics trajectories of the chignolin mini-protein and (ii) static BioEmu samples, and projected each onto its two slowest learned eigenfunctions.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="figs/litl-chignolin-fes.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Free-energy landscapes in the coordinates of the two slowest learned eigenfunctions, from molecular dynamics (left) and from BioEmu samples (right). Figure 1 of the paper."><img src="figs/litl-chignolin-fes.png" class="img-fluid figure-img" alt="Free-energy landscapes in the coordinates of the two slowest learned eigenfunctions, from molecular dynamics (left) and from BioEmu samples (right). Figure 1 of the paper."></a></p>
+<figcaption><strong>Free-energy landscapes in the coordinates of the two slowest learned eigenfunctions</strong>, from molecular dynamics (left) and from BioEmu samples (right). Figure 1 of the paper.</figcaption>
+</figure>
+</div>
+<p>Both data sources recover the same mechanisms: the first slow mode is folding, the second separates unfolded from intermediate hairpin states. The <em>kinetics</em> differ, though. BioEmu underestimates the folding barrier, and the occupancies computed from the two learned generators disagree:</p>
+<p><a href="figs/litl-chignolin-occupancy.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="figs/litl-chignolin-occupancy.png" class="img-fluid"></a></p>
+<p>So LITL does two things here: it extracts physically meaningful slow modes from static generative samples, and it gives a <strong>kinetic test</strong> that a generative model can pass or fail.</p>
+</section>
+<section id="cobalt-nanoparticles-a-live-magnetization-lab" class="level3">
+<h3 class="anchored" data-anchor-id="cobalt-nanoparticles-a-live-magnetization-lab">Cobalt nanoparticles: a live magnetization lab</h3>
+<p>The magnetization <span class="math inline">\(\mathbf m\in\mathbb S^2\)</span> of a single-domain cobalt nanoparticle wanders thermally in an anisotropy landscape,</p>
+<p><span class="math display">\[
+U(\mathbf m)=-K_u\,(\mathbf m\cdot\mathbf n_u)^2+K_c\,\big(m_x^2m_y^2+m_y^2m_z^2+m_z^2m_x^2\big),
+\]</span></p>
+<p>with a uniaxial easy axis <span class="math inline">\(\mathbf n_u\)</span> and a cubic term. The slowest generator eigenvalue sets the <strong>Néel relaxation time</strong>, i.e.&nbsp;how long a magnetic bit survives. Data storage needs barriers above about 60 <span class="math inline">\(k_BT\)</span>; magnetic hyperthermia, which heats tumours with alternating fields, depends on exactly these relaxation rates. Experimentally, anisotropy landscapes are reconstructed from switching-field measurements such as micro-SQUID magnetometry, which gives energies rather than trajectories. This is spherical LITL’s home turf: uniform random directions as source samples and energy evaluations as black-box feedback.</p>
+<p>In the paper, LITL with <span class="math inline">\(n=10^4\)</span> uniform samples recovers timescales and eigenfunctions with errors around <span class="math inline">\(5\cdot10^{-3}\)</span>, including <strong>more than ten eigenfunctions with the correct symmetry groups</strong>. Those groups dictate how many relaxation times are degenerate.</p>
+<p>The widget below runs a small LITL <strong>in your browser</strong>.</p>
+<div class="kv-widget" id="mag-lab">
+  <p class="kv-title">Try it: magnetization lab</p>
+  <p class="kv-sub"><b>Sphere:</b> every point is a magnetization direction, coloured by the energy U (dark = easy directions) or by a slow mode ψₖ estimated by LITL (blue negative, orange positive). The dashed line is the easy axis. The 500 black dots are nanoparticles whose magnetizations follow Langevin dynamics. Drag to rotate. <b>Top right:</b> relaxation times 1/|λₖ|, LITL estimate (orange) against a reference (grey ring). <b>Bottom right:</b> after all moments are saturated upwards, the mean magnetization ⟨m<sub>z</sub>⟩ of the swarm (black dots) against LITL's forecast from its spectrum (orange) and the reference forecast (grey dashes).</p>
+  <div class="kv-controls">
+    <label><span>K<sub>u</sub></span> <input type="range" id="mag-ku" min="0" max="1.5" step="0.05" value="1" aria-label="uniaxial anisotropy"><output id="mag-ku-out">1.00</output></label>
+    <label><span>K<sub>c</sub></span> <input type="range" id="mag-kc" min="0" max="1.5" step="0.05" value="0.3" aria-label="cubic anisotropy"><output id="mag-kc-out">0.30</output></label>
+    <label><span>k<sub>B</sub>T</span> <input type="range" id="mag-kt" min="0.3" max="1" step="0.01" value="0.3" aria-label="temperature"><output id="mag-kt-out">0.30</output></label>
+  </div>
+  <div class="kv-controls">
+    <span>energy evaluations n&nbsp; <span class="kv-seg"><button type="button" data-n="500">500</button><button type="button" data-n="2000" class="on">2,000</button><button type="button" data-n="8000">8,000</button><button type="button" data-n="16000">16,000</button></span></span>
+    <button type="button" class="kv-btn" id="mag-resample">New random sample</button>
+  </div>
+  <div class="kv-controls">
+    <span>colour by&nbsp; <span class="kv-seg"><button type="button" data-color="0" class="on">energy U</button><button type="button" data-color="1">ψ₁</button><button type="button" data-color="2">ψ₂</button><button type="button" data-color="3">ψ₃</button><button type="button" data-color="4">ψ₄</button><button type="button" data-color="5">ψ₅</button></span></span>
+  </div>
+  <div class="kv-controls">
+    <span>swarm driven by&nbsp; <span class="kv-seg"><button type="button" data-force="true" class="on">physical force</button><button type="button" data-force="litl">force learned by LITL</button></span></span>
+    <button type="button" class="kv-btn" id="mag-saturate">Saturate ↑ and release</button>
+    <button type="button" class="kv-btn" id="mag-pause">Pause</button>
+  </div>
+  <div class="kv-panels kv-mag">
+    <div class="kv-sphere"><canvas id="mag-base" aria-label="Sphere of magnetization directions"></canvas><canvas id="mag-over" aria-label="Magnetization swarm; drag to rotate"></canvas></div>
+    <div class="kv-stack">
+      <svg id="mag-spec" viewbox="0 0 260 150" role="img" aria-label="Relaxation times, LITL estimate and reference"></svg>
+      <canvas id="mag-relax" style="width:100%;aspect-ratio:260/150;display:block;background:#fff;border:1px solid #eef0f2;border-radius:8px" aria-label="Mean magnetization relaxation"></canvas>
+    </div>
+  </div>
+  <p class="kv-margin" id="mag-out"></p>
+</div>
+<script src="magnet-widget.js"></script>
+<p>Things to try:</p>
+<ul>
+<li><strong>Lower the temperature.</strong> τ₁ grows exponentially (Arrhenius–Néel), and ψ₁ turns into a sharp switch between the two hemispheres: it <em>is</em> the reversal coordinate.</li>
+<li><strong>Set <span class="math inline">\(K_u=0\)</span>.</strong> Pure cubic anisotropy has six equivalent easy directions, and the slowest relaxation time becomes three-fold degenerate. Raise <span class="math inline">\(K_u\)</span> slowly and watch the symmetry break: one mode (reversal along <span class="math inline">\(z\)</span>) and a degenerate pair (in-plane). This is the “symmetry dictates multiplicity” effect the paper finds for the cobalt nanoparticle.</li>
+<li><strong>Change the budget n.</strong> With 500 energy evaluations the higher modes are noisy. With 16,000 they sit on the reference rings. That is <span class="math inline">\(\varepsilon_n(\delta)\)</span> shrinking as you watch.</li>
+<li><strong>Drive the swarm with the force learned by LITL.</strong> The swarm now moves under the projected drift <span class="math inline">\(\widehat{\nabla U}\)</span> computed from the spectrum, and it still relaxes as the forecast says.</li>
+</ul>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>What the widget does, exactly.</strong> LITL draws <span class="math inline">\(n\)</span> uniformly random directions, evaluates their energies, and forms importance-weighted covariances of 49 polynomial features (monomials of degree 5 and 6, which span all spherical harmonics up to degree 6) and of their tangential gradients. It then solves the generalized eigenproblem of step 2 and builds the projected drift. The paper instead <em>learns</em> the features with a neural network (step 1). A fixed dictionary keeps the demo fast in a browser. The reference uses the same features with 6,000 deterministic quadrature points. Over the slider ranges it agrees with an independent spherical-harmonic solver to better than 1%, and at the paper’s setting (<span class="math inline">\(K_u=1\)</span>, <span class="math inline">\(K_c=0.3\)</span>, <span class="math inline">\(k_BT=1\)</span>) it reproduces the paper’s ground truth <span class="math inline">\(\lambda_1=-1.302\)</span>, <span class="math inline">\(\lambda_{2,3}=-2.48\)</span>.</p>
+</div>
+</div>
+</div>
+<p>For comparison, here are the first three eigenfunctions LITL learned with neural features in the paper, in polar coordinates (polar angle as radius):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="figs/litl-cobalt-paper.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Leading eigenfunctions of the cobalt nanoparticle generator learned by LITL from black-box energy evaluations, with |\hat\lambda_1|\approx1.36 and |\hat\lambda_2|\approx|\hat\lambda_3|\approx2.5. ψ₁ is the slow reversal pathway between the two easy directions; the pair (ψ₂, ψ₃) captures faster symmetric modes orthogonal to it. Figure 2 of the paper."><img src="figs/litl-cobalt-paper.png" class="img-fluid figure-img" alt="Leading eigenfunctions of the cobalt nanoparticle generator learned by LITL from black-box energy evaluations, with |\hat\lambda_1|\approx1.36 and |\hat\lambda_2|\approx|\hat\lambda_3|\approx2.5. ψ₁ is the slow reversal pathway between the two easy directions; the pair (ψ₂, ψ₃) captures faster symmetric modes orthogonal to it. Figure 2 of the paper."></a></p>
+<figcaption><strong>Leading eigenfunctions of the cobalt nanoparticle generator</strong> learned by LITL from black-box energy evaluations, with <span class="math inline">\(|\hat\lambda_1|\approx1.36\)</span> and <span class="math inline">\(|\hat\lambda_2|\approx|\hat\lambda_3|\approx2.5\)</span>. ψ₁ is the slow reversal pathway between the two easy directions; the pair (ψ₂, ψ₃) captures faster symmetric modes orthogonal to it. Figure 2 of the paper.</figcaption>
+</figure>
+</div>
+</section>
+<section id="fairness-steering-of-a-trained-classifier-without-retraining" class="level3">
+<h3 class="anchored" data-anchor-id="fairness-steering-of-a-trained-classifier-without-retraining">Fairness steering of a trained classifier, without retraining</h3>
+<p>The last experiment moves from physics to machine learning. On the Adult Income dataset a classifier <span class="math inline">\(f_\omega(x)=\mathrm{softmax}(a_\omega^\top e_\omega(x))\)</span> predicts whether income exceeds $50K, with gender withheld from training (fairness under unawareness). Its latent representation <span class="math inline">\(e_\omega(x)\)</span> lives on a sphere <span class="math inline">\(\mathbb S^{31}\)</span>. The model is accurate but fails an equal-opportunity audit: the true-positive-rate (TPR) gap between men and women is too large.</p>
+<p>Spherical LITL treats this as a transfer problem. The source is pure diffusion on the latent sphere, so the source samples are 5,000 uniformly random latent directions. The target potential is the local TPR gap <span class="math inline">\(U(e)=|\mathrm{TPR}_{\text{male}}(\mathcal N_e)-\mathrm{TPR}_{\text{female}}(\mathcal N_e)|\)</span> measured on the audit set around <span class="math inline">\(e\)</span>. It is a black box: there is no gradient with respect to model parameters and no access to the sensitive attribute during training. LITL learns the slow eigenspaces of this “fairness Langevin dynamics” and the projected gradient, and then nudges every latent vector a few small steps along it.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="figs/litl-fairness-pareto-paper.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Accuracy–fairness Pareto curves on the audit (left) and test (right) sets. Each point is one more LITL step; colours are step sizes γ. The grey cloud is pure diffusion with the same step budget, which does nothing useful. The TPR gap drops from roughly 23–25% to about 1% while accuracy degrades gracefully. Figure 10 of the paper."><img src="figs/litl-fairness-pareto-paper.png" class="img-fluid figure-img" alt="Accuracy–fairness Pareto curves on the audit (left) and test (right) sets. Each point is one more LITL step; colours are step sizes γ. The grey cloud is pure diffusion with the same step budget, which does nothing useful. The TPR gap drops from roughly 23–25% to about 1% while accuracy degrades gracefully. Figure 10 of the paper."></a></p>
+<figcaption><strong>Accuracy–fairness Pareto curves</strong> on the audit (left) and test (right) sets. Each point is one more LITL step; colours are step sizes γ. The grey cloud is pure diffusion with the same step budget, which does nothing useful. The TPR gap drops from roughly 23–25% to about 1% while accuracy degrades gracefully. Figure 10 of the paper.</figcaption>
+</figure>
+</div>
+<p>The spectrum also helps with interpretation. It shows a clear gap after 16 slow eigenfunctions. About <strong>half of the TPR gap is due to the model</strong>, and steering along those 16 slowest directions removes it with practically no loss of accuracy. The rest reflects bias in the data itself, and correcting it needs 16 further, faster modes, which do cost accuracy.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="figs/litl-fairness-ablation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Ablations and baselines (Table 2 of the paper, mean ± std over 10 trials, relative to the original classifier). Full LITL removes 94% of the gap and keeps 97% of the accuracy, comparable to retraining or fine-tuning, which need retraining with the sensitive attribute in the loss. Replacing the generator-based update with local finite differences, dropping the audit feedback, or truncating the spectrum in the wrong place each breaks it, so importance weighting, spectral structure and generator-based updates are all necessary."><img src="figs/litl-fairness-ablation.png" class="img-fluid figure-img" alt="Ablations and baselines (Table 2 of the paper, mean ± std over 10 trials, relative to the original classifier). Full LITL removes 94% of the gap and keeps 97% of the accuracy, comparable to retraining or fine-tuning, which need retraining with the sensitive attribute in the loss. Replacing the generator-based update with local finite differences, dropping the audit feedback, or truncating the spectrum in the wrong place each breaks it, so importance weighting, spectral structure and generator-based updates are all necessary."></a></p>
+<figcaption><strong>Ablations and baselines</strong> (Table 2 of the paper, mean ± std over 10 trials, relative to the original classifier). Full LITL removes 94% of the gap and keeps 97% of the accuracy, comparable to retraining or fine-tuning, which need retraining with the sensitive attribute in the loss. Replacing the generator-based update with local finite differences, dropping the audit feedback, or truncating the spectrum in the wrong place each breaks it, so importance weighting, spectral structure and generator-based updates are all necessary.</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="why-i-think-this-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-i-think-this-matters">Why I think this matters</h2>
+<p><strong>Transfer learning as transfer of dynamics.</strong> The sentence from the paper I like best is this one: <em>instead of transferring weights or features, LITL transfers generator structure</em>. The object that moves from source to target is not a parameter vector but a geometry, the slow manifold and the drift on it. That is why the same method can debias a molecular simulation, give a clock to a generative model, read the switching physics of a nanomagnet, and steer a classifier.</p>
+<p><strong>It complements diffusion models.</strong> Score-based generative models learn the pointwise score <span class="math inline">\(\nabla\log p_t\)</span> from target samples, along an artificial noising process. LITL never sees target samples. It learns a <em>spectrally filtered</em> score, governing long-time behaviour, from a different distribution plus side information, with finite-sample guarantees. Those are different jobs.</p>
+<p><strong>Langevin dynamics is everywhere in AI.</strong> Stochastic gradient descent near minima, Bayesian sampling, the forward process of diffusion models, and possibly the metastable dynamics of reasoning in large models all have Langevin-type structure. Spectral operator learning gives a principled, gradient-free way to analyse and steer such latent dynamics.</p>
+<p><strong>Limitations.</strong> LITL currently assumes reversible (gradient) Langevin dynamics, informative black-box evaluations, and an identifiable low-dimensional slow structure. Non-reversible and time-dependent dynamics are the natural next frontier.</p>
+</section>
+<section id="paper-and-citation" class="level2">
+<h2 class="anchored" data-anchor-id="paper-and-citation">Paper and citation</h2>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Langevin-Informed Transfer Learning: Replacing Target Samples by Black-Box Feedback</strong><br> Vladimir R. Kostić, Karim Lounici, Hélène Halconruy, Timothée Devergne, Michele Parrinello, Massimiliano Pontil. <em>Advances in Neural Information Processing Systems (NeurIPS), 2026.</em><br> <a href="https://arxiv.org/abs/2610.01522">arXiv:2610.01522</a></p>
+</div>
+</div>
+</div>
+<div class="kv-cite">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">@inproceedings</span>{<span class="ot">kostic2026litl</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>     = {Langevin-Informed Transfer Learning: Replacing Target Samples</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               by Black-Box Feedback},</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>    = {Kostic, Vladimir R. and Lounici, Karim and Halconruy, H{<span class="ch">\'</span>e}l{<span class="ch">\`</span>e}ne</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>               and Devergne, Timoth{<span class="ch">\'</span>e}e and Parrinello, Michele and Pontil, Massimiliano},</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">booktitle</span> = {Advances in Neural Information Processing Systems (NeurIPS)},</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>      = {2026},</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span>       = {https://arxiv.org/abs/2610.01522}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This work builds on our earlier papers on <a href="../../posts/2024-12-30-current-research/index.html">learning the infinitesimal generator</a> of stochastic diffusions and on learning from biased simulations, and on the <a href="../../posts/2026-09-30-toeplitz-spectral-methods/index.html">Toeplitz</a> and <a href="../../posts/2026-09-30-sgot-metric-dynamical-systems/index.html">optimal-transport</a> views of operator learning discussed in earlier posts.</p>
+<p><em>About the figures:</em> the hero figure and the magnetization lab use minimal re-implementations written for this post (fixed features, LITL step 2). The double-well, chignolin-occupancy and fairness-ablation charts re-plot numbers from the paper. The chignolin, cobalt and Pareto figures are taken from the paper.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/vladi-slk\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>
