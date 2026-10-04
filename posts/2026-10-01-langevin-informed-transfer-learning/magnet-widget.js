@@ -125,7 +125,7 @@
   // ------------------------------------------------------------------ grids for display and learned drift
   const NT = 91, NP = 180;
   const grid = { U: new Float64Array(NT * NP), psi: [], drift: new Float64Array(NT * NP * 3) };
-  for (let k = 0; k < 6; k++) grid.psi.push(new Float64Array(NT * NP));
+  for (let k = 0; k <= 8; k++) grid.psi.push(new Float64Array(NT * NP));
   function fillGrids(model) {
     const f = new Float64Array(F), r = model.r, ps = new Float64Array(r);
     for (let it = 0; it < NT; it++) {
@@ -135,7 +135,7 @@
         grid.U[g] = energy(x, y, z);
         feat(x, y, z, f);
         for (let i = 0; i < r; i++) { let s = 0; for (let k = 0; k < F; k++) s += f[k] * model.coef[k * r + i]; ps[i] = s; }
-        for (let k = 1; k <= 5; k++) grid.psi[k][g] = ps[k];
+        for (let k = 1; k <= 8; k++) grid.psi[k][g] = k < r ? ps[k] : 0;
         let Gx = 0, Gy = 0, Gz = 0;
         for (let i = 1; i < r; i++) { const a = -model.lam[i] * ps[i]; Gx += a * model.Em[3 * i]; Gy += a * model.Em[3 * i + 1]; Gz += a * model.Em[3 * i + 2]; }
         const rr = Gx * x + Gy * y + Gz * z;                            // learned grad_S U = -(I - mm^T) L^ m
@@ -143,7 +143,7 @@
       }
     }
     // fix the arbitrary sign of each eigenfunction: positive at the north pole (or at its max |value|)
-    for (let k = 1; k <= 5; k++) {
+    for (let k = 1; k <= 8; k++) {
       const a = grid.psi[k]; let im = 0; for (let g = 0; g < a.length; g++) if (Math.abs(a[g]) > Math.abs(a[im])) im = g;
       const sgn = Math.abs(a[0]) > 0.2 * Math.abs(a[im]) ? Math.sign(a[0]) : Math.sign(a[im]);
       if (sgn < 0) for (let g = 0; g < a.length; g++) a[g] = -a[g];

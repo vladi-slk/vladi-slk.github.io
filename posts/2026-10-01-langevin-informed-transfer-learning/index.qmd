@@ -13,6 +13,27 @@ toc-depth: 2
 reference-location: margin
 resources:
   - magnet-widget.js
+include-in-header:
+  - text: |
+      <style>
+      .kv-flow { margin: 1.2rem 0 1.4rem; font-size: 0.86rem; line-height: 1.4; }
+      .kv-flow-row { display: flex; align-items: stretch; gap: 6px; }
+      .kv-flow-box { flex: 1 1 0; border: 1px solid #d8dee4; border-radius: 10px; padding: 8px 10px; background: #fbfcfd; color: #343a40; }
+      .kv-flow-box b { color: #1f2328; }
+      .kv-flow-out { border-color: #eb6834; background: #fdf6f2; text-align: center; }
+      .kv-flow-arrow { align-self: center; color: #8c959f; font-size: 1.1rem; }
+      .kv-flow-down { text-align: center; color: #8c959f; font-size: 1.1rem; line-height: 1.6; }
+      @media (max-width: 600px) { .kv-flow-row { flex-direction: column; } .kv-flow-arrow { transform: rotate(90deg); } }
+      .kv-btn { border: 1px solid #d0d7de; background: #fff; border-radius: 8px; padding: 5px 11px; font-size: 0.84rem; color: #343a40; cursor: pointer; }
+      .kv-btn:hover { background: #f3f4f6; }
+      .kv-panels.kv-mag { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+      @media (max-width: 720px) { .kv-panels.kv-mag { grid-template-columns: 1fr; } }
+      .kv-sphere { position: relative; width: 100%; max-width: 330px; margin: 0 auto; aspect-ratio: 1; }
+      .kv-sphere canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .kv-sphere canvas:last-child { cursor: grab; touch-action: none; }
+      .kv-stack { display: flex; flex-direction: column; gap: 10px; }
+      .kv-stack svg { width: 100%; height: auto; display: block; background: #fff; border: 1px solid #eef0f2; border-radius: 8px; }
+      </style>
 ---
 
 ::: {.post-lede}
@@ -227,7 +248,7 @@ The widget below runs a small LITL **in your browser**.
     <button type="button" class="kv-btn" id="mag-resample">New random sample</button>
   </div>
   <div class="kv-controls">
-    <span>colour by&nbsp; <span class="kv-seg"><button type="button" data-color="0" class="on">energy U</button><button type="button" data-color="1">ψ₁</button><button type="button" data-color="2">ψ₂</button><button type="button" data-color="3">ψ₃</button><button type="button" data-color="4">ψ₄</button><button type="button" data-color="5">ψ₅</button></span></span>
+    <span>colour by&nbsp; <span class="kv-seg"><button type="button" data-color="0" class="on">energy U</button><button type="button" data-color="1">ψ₁</button><button type="button" data-color="2">ψ₂</button><button type="button" data-color="3">ψ₃</button><button type="button" data-color="4">ψ₄</button><button type="button" data-color="5">ψ₅</button><button type="button" data-color="6">ψ₆</button><button type="button" data-color="7">ψ₇</button><button type="button" data-color="8">ψ₈</button></span></span>
   </div>
   <div class="kv-controls">
     <span>swarm driven by&nbsp; <span class="kv-seg"><button type="button" data-force="true" class="on">physical force</button><button type="button" data-force="litl">force learned by LITL</button></span></span>
@@ -235,15 +256,15 @@ The widget below runs a small LITL **in your browser**.
     <button type="button" class="kv-btn" id="mag-pause">Pause</button>
   </div>
   <div class="kv-panels kv-mag">
-    <div class="kv-sphere"><canvas id="mag-base" aria-label="Sphere of magnetization directions"></canvas><canvas id="mag-over" aria-label="Magnetization swarm; drag to rotate"></canvas></div>
-    <div class="kv-stack">
-      <svg id="mag-spec" viewBox="0 0 260 150" role="img" aria-label="Relaxation times, LITL estimate and reference"></svg>
+    <div class="kv-sphere" style="position:relative;width:100%;max-width:330px;margin:0 auto;aspect-ratio:1"><canvas id="mag-base" style="position:absolute;inset:0;width:100%;height:100%" aria-label="Sphere of magnetization directions"></canvas><canvas id="mag-over" style="position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:none" aria-label="Magnetization swarm; drag to rotate"></canvas></div>
+    <div class="kv-stack" style="display:flex;flex-direction:column;gap:10px">
+      <svg id="mag-spec" viewBox="0 0 260 150" style="width:100%;height:auto;display:block;background:#fff;border:1px solid #eef0f2;border-radius:8px" role="img" aria-label="Relaxation times, LITL estimate and reference"></svg>
       <canvas id="mag-relax" style="width:100%;aspect-ratio:260/150;display:block;background:#fff;border:1px solid #eef0f2;border-radius:8px" aria-label="Mean magnetization relaxation"></canvas>
     </div>
   </div>
   <p class="kv-margin" id="mag-out"></p>
 </div>
-<script src="magnet-widget.js"></script>
+<script src="magnet-widget.js?v=2"></script>
 ```
 
 Things to try:
